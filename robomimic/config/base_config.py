@@ -278,16 +278,16 @@ class BaseConfig(Config):
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
         self.observation.encoder.spatial.core_class = "SpatialCore"                   # Default ScanCore class uses Conv1D to process this modality
         # self.observation.encoder.spatial.core_class = "SparseTransformer"                   # Default ScanCore class uses Conv1D to process this modality
-        self.observation.encoder.scan.core_kwargs = Config()                    # See models/obs_core.py for important kwargs to set and defaults used
-        self.observation.encoder.scan.core_kwargs.do_not_lock_keys()
+        self.observation.encoder.spatial.core_kwargs = Config()                    # See models/obs_core.py for important kwargs to set and defaults used
+        self.observation.encoder.spatial.core_kwargs.do_not_lock_keys()
 
         # =============== Spatial track encoder  ===============
         self.observation.encoder.track = deepcopy(self.observation.encoder.rgb)
 
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
-        self.observation.encoder.spatial.core_class = "TrackCore"                   # Default ScanCore class uses Conv1D to process this modality
-        self.observation.encoder.scan.core_kwargs = Config()                    # See models/obs_core.py for important kwargs to set and defaults used
-        self.observation.encoder.scan.core_kwargs.do_not_lock_keys()
+        self.observation.encoder.track.core_class = "TrackCore"                   # Default ScanCore class uses Conv1D to process this modality
+        self.observation.encoder.track.core_kwargs = Config()                    # See models/obs_core.py for important kwargs to set and defaults used
+        self.observation.encoder.track.core_kwargs.do_not_lock_keys()
 
     def meta_config(self):
         """
