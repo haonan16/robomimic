@@ -264,7 +264,7 @@ class BaseConfig(Config):
         # =============== Depth default encoder (same as rgb) ===============
         self.observation.encoder.depth = deepcopy(self.observation.encoder.rgb)
 
-        # =============== feature default encoder (same as rgb) ===============
+        # =============== Feature default encoder (same as rgb) ===============
         self.observation.encoder.feature = deepcopy(self.observation.encoder.rgb)
 
         # =============== Scan default encoder (Conv1d backbone + linear layer output) ===============
@@ -284,7 +284,7 @@ class BaseConfig(Config):
         self.observation.encoder.spatial.core_kwargs = Config()                    # See models/obs_core.py for important kwargs to set and defaults used
         self.observation.encoder.spatial.core_kwargs.do_not_lock_keys()
 
-        # =============== Spatial track encoder  ===============
+        # =============== track encoder  ===============
         self.observation.encoder.track = deepcopy(self.observation.encoder.rgb)
 
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
