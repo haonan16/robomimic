@@ -264,6 +264,9 @@ class BaseConfig(Config):
         # =============== Depth default encoder (same as rgb) ===============
         self.observation.encoder.depth = deepcopy(self.observation.encoder.rgb)
 
+        # =============== feature default encoder (same as rgb) ===============
+        self.observation.encoder.feature = deepcopy(self.observation.encoder.rgb)
+
         # =============== Scan default encoder (Conv1d backbone + linear layer output) ===============
         self.observation.encoder.scan = deepcopy(self.observation.encoder.rgb)
 
