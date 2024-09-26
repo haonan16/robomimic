@@ -98,11 +98,13 @@ class VisualCore(EncoderCore, BaseNets.ConvBase):
 
         # add input channel dimension to visual core inputs
         backbone_kwargs["input_channel"] = input_shape[0]
-
+        
         # extract only relevant kwargs for this specific backbone
-        backbone_kwargs = extract_class_init_kwargs_from_dict(
-                cls = ObsUtils.OBS_ENCODER_CORES[backbone_class],
-                dic=backbone_kwargs, copy=True)
+        backbone_kwargs = extract_class_init_kwargs_from_dict(cls=eval(backbone_class), 
+                                                              dic=backbone_kwargs, copy=True)
+        # backbone_kwargs = extract_class_init_kwargs_from_dict(
+        #         cls = ObsUtils.OBS_ENCODER_CORES[backbone_class],
+        #         dic=backbone_kwargs, copy=True)
 
         # visual backbone
         assert isinstance(backbone_class, str)
