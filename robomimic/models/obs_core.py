@@ -8,6 +8,8 @@ import abc
 import numpy as np
 import textwrap
 import random
+from typing import Dict, List, Type
+from termcolor import cprint
 
 import torch
 import torch.nn as nn
@@ -668,6 +670,113 @@ class TrackCore(EncoderCore, BaseNets.Module):
         return msg
 
 
+
+"""
+================================================
+Sparse Feature Networks (https://github.com/YanjieZe/3D-Diffusion-Policy/blob/master/3D-Diffusion-Policy/diffusion_policy_3d/model/vision/pointnet_extractor.py#L109)
+================================================
+"""
+class PointNetCore(EncoderCore, BaseNets.Module):
+    """
+    A core network that encodes point clouds using a point cloud backbone with optional 
+    pooling and linear projection layers.
+    """
+
+    def __init__(
+        self,
+        input_shape,
+        feature_dimension: int = 64,
+        use_layernorm: bool = False,
+        final_norm: str = 'layernorm',
+    ):
+        """
+        Args:
+            input_channels (int): Number of input channels for point cloud data (default: 3 for XYZ).
+            out_channels (int): Output channels from the backbone (default: 1024).
+            use_layernorm (bool): Whether to use LayerNorm after layers in the backbone.
+            final_norm (str): Type of normalization to use at the final stage ('none' or 'layernorm').
+        """
+        super(PointNetCore, self).__init__(input_shape=input_shape)
+        self.feature_dimension = feature_dimension
+
+        # Define the backbone (PointNet-like MLP)
+        block_channel = [64, 128, 256]
+        cprint(f"[PointNetCore] use_layernorm: {use_layernorm}", 'cyan')
+        cprint(f"[PointNetCore] final_norm: {final_norm}", 'cyan')
+
+        self.mlp = nn.Sequential(
+            nn.Linear(input_shape[-1], block_channel[0]),
+            nn.LayerNorm(block_channel[0]) if use_layernorm else nn.Identity(),
+            nn.ReLU(),
+            nn.Linear(block_channel[0], block_channel[1]),
+            nn.LayerNorm(block_channel[1]) if use_layernorm else nn.Identity(),
+            nn.ReLU(),
+            nn.Linear(block_channel[1], block_channel[2]),
+            nn.LayerNorm(block_channel[2]) if use_layernorm else nn.Identity(),
+            nn.ReLU(),
+        )
+
+        # Final projection layer
+        if final_norm == 'layernorm':
+            self.final_projection = nn.Sequential(
+                nn.Linear(block_channel[-1], feature_dimension),
+                nn.LayerNorm(feature_dimension)
+            )
+        elif final_norm == 'none':
+            self.final_projection = nn.Linear(block_channel[-1], feature_dimension)
+        else:
+            raise NotImplementedError(f"final_norm: {final_norm}")
+
+
+    def forward(self, x):
+        """
+        Forward pass through PointNetCore.
+
+        Args:
+            x (torch.Tensor): Input point cloud data (B, N, C) where N is the number of points and C is the number of channels.
+        
+        Returns:
+            torch.Tensor: Encoded feature representation of the point cloud.
+        """
+        x = self.mlp(x)
+        x = torch.max(x, 1)[0]  # Max pooling across the points
+        x = self.final_projection(x)
+
+        return x
+
+    def output_shape(self, input_shape):
+        """
+        Function to compute output shape from inputs to this module.
+
+        Args:
+            input_shape (iterable of int): Shape of input point cloud, excluding batch dimension.
+
+        Returns:
+            out_shape ([int]): Output shape after passing through the network.
+        """
+        if self.feature_dimension is not None:
+            return [self.feature_dimension]
+        feat_shape = [self.final_projection.out_features]
+        if self.pool is not None:
+            feat_shape = self.pool.output_shape(feat_shape)
+        if self.flatten_layer:
+            return [np.prod(feat_shape)]
+        else:
+            return feat_shape
+
+    def __repr__(self):
+        """Pretty print network."""
+        header = '{}'.format(str(self.__class__.__name__))
+        msg = ''
+        indent = ' ' * 2
+        msg += f"\ninput_shape={self.mlp[0].in_features}"
+        msg += f"\noutput_shape={self.output_shape(self.mlp[0].in_features)}"
+        msg += f"\nbackbone_mlp={self.mlp}"
+        msg += f"\nfinal_projection={self.final_projection}"
+        msg += f"\npool_net={self.pool}" if self.pool else "\npool_net=None"
+        return header + '(' + msg + '\n)'
+    
+    
 """
 ================================================
 Observation Randomizer Networks
