@@ -268,7 +268,7 @@ class BaseConfig(Config):
         self.observation.encoder.feature = deepcopy(self.observation.encoder.rgb)
         
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
-        self.observation.encoder.feature.core_class = "PointNetCore"                   
+        self.observation.encoder.feature.core_class = "SpatialCore"                   
         self.observation.encoder.feature.core_kwargs = Config()                  
         self.observation.encoder.feature.core_kwargs.do_not_lock_keys()
 
@@ -276,7 +276,7 @@ class BaseConfig(Config):
         self.observation.encoder.sparse_feature = deepcopy(self.observation.encoder.rgb)
 
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
-        self.observation.encoder.sparse_feature.core_class = "PointNetCore"                   
+        self.observation.encoder.sparse_feature.core_class = "SpatialCore"                   
         self.observation.encoder.sparse_feature.core_kwargs = Config()                  
         self.observation.encoder.sparse_feature.core_kwargs.do_not_lock_keys()
 

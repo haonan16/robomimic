@@ -350,7 +350,7 @@ class SpatialCore(EncoderCore, BaseNets.ConvBase):
         self.regularization = regularization
         
         if self.use_feats:
-            in_channels = input_shape[0]
+            in_channels = input_shape[-1]
         else:
             in_channels = 3
 
@@ -686,7 +686,7 @@ class PointNetCore(EncoderCore, BaseNets.Module):
         self,
         input_shape,
         feature_dimension: int = 64,
-        use_layernorm: bool = False,
+        use_layernorm: bool = True,
         final_norm: str = 'layernorm',
     ):
         """
