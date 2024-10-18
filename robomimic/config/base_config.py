@@ -268,17 +268,17 @@ class BaseConfig(Config):
         self.observation.encoder.feature = deepcopy(self.observation.encoder.rgb)
         
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
-        self.observation.encoder.feature.core_class = "SpatialCore"                   
-        self.observation.encoder.feature.core_kwargs = Config()                  
-        self.observation.encoder.feature.core_kwargs.do_not_lock_keys()
+        # self.observation.encoder.feature.core_class = "SpatialCore"                   
+        # self.observation.encoder.feature.core_kwargs = Config()                  
+        # self.observation.encoder.feature.core_kwargs.do_not_lock_keys()
 
         # =============== Sparse Feature encoder  ===============
-        self.observation.encoder.sparse_feature = deepcopy(self.observation.encoder.rgb)
+        # self.observation.encoder.sparse_feature = deepcopy(self.observation.encoder.rgb)
 
         # Scan: Modify the core class + kwargs, otherwise, is same as rgb encoder
-        self.observation.encoder.sparse_feature.core_class = "SpatialCore"                   
-        self.observation.encoder.sparse_feature.core_kwargs = Config()                  
-        self.observation.encoder.sparse_feature.core_kwargs.do_not_lock_keys()
+        # self.observation.encoder.sparse_feature.core_class = "SpatialCore"                   
+        # self.observation.encoder.sparse_feature.core_kwargs = Config()                  
+        # self.observation.encoder.sparse_feature.core_kwargs.do_not_lock_keys()
 
         # =============== Scan default encoder (Conv1d backbone + linear layer output) ===============
         self.observation.encoder.scan = deepcopy(self.observation.encoder.rgb)
